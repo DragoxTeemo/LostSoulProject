@@ -87,6 +87,8 @@ namespace MaskedRiderEngine
         public bool IsDefeated {get; set;} = false;
         public int TurnsInBattle {get; set;} = 0;
         public int BattlesParticipated {get; set;} = 0; // A counter that might have a future use
+        public int PositionOrder {get; set;} = 1; // 1 is frontline, 6 is backline (but only 4 for heroes)
+        public bool ExtraAttack {get; set;} = false; // Only Eva has extra attack
 
         public SanityTier CurrentSanityTier
         {

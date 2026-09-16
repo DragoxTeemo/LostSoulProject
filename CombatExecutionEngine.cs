@@ -8,12 +8,14 @@ namespace MaskedRiderEngine.Systems
     {
         private const double mediumArmorReduction = 0.60;
         private const double lightArmorReduction = 0.40;
+        private static readonly Random _rng = new Random();
 
         public class TurnResult
         {
             public string LogMessage {get; set;}
             public bool LilyRageTriggered {get;set;}
             public bool BattleEnded {get; set;}
+            public List<string> AppliedStatuses {get; set;} = new List<string>();
         }
 
         public static TurnResult ExecuteAttack(
@@ -48,6 +50,21 @@ namespace MaskedRiderEngine.Systems
                 attacker.TurnsInBattle++;
                 double momentumBonus = Math.Min(1.5, 1.0 + (attacker.TurnsInBattle * 0.05));
                 rawDamage = (int)(rawDamage * momentumBonus);
+
+                if (weapon.HasVarianceModifier)
+                {
+                    double roll = _rng.NextDouble();
+                    if (roll < 0.60)
+                    {
+                        rawDamage = (int)(rawDamage * 1.25); //60% chance to deal more damage
+                        result.LogMessage += "[Vector found a weak spot]";
+                    }
+                    else
+                    {
+                        rawDamage = (int)(rawDamage * 0.80); // 40% chance to deal less damage
+                        result.LogMessage += "Failed to find weak spot";
+                    }
+                }
             }
 
             if (targetCodename == "Nirvana" || target.Profile.ArmorClass == ArmorWeightClass.None)

@@ -6,7 +6,8 @@ namespace MaskedRiderEngine.Models
     {
         SingleTarget,
         MultiTarget,
-        AdjacentAOE
+        AdjacentAOE,
+        Extra
     }
 
     public enum ElementType
@@ -83,7 +84,7 @@ namespace MaskedRiderEngine.Models
             {
                 Name = "Reckless Attack",
                 BasePower = 5,
-                Scope = AttackScope.SingleTarget,
+                Scope = AttackScope.DualAction, // Eva can attack twice per round
                 Element = ElementType.Physical,
                 StatusEffectChance = 0.25, //Chance to stun
                 StatusEffectType = "Stun"
