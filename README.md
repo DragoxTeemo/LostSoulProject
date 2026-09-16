@@ -1,0 +1,4 @@
+# Between Worlds: Lost Soul - The Game
+A 2.5D dark urban fantasy narrative RPG blending <i>Darkest Dungeon</i>-inspired tactical turn-based combat with <i>Persona Series</i> character dialogue, interactions, and sprites to create a game that focuses on combat with a sanity meter. 
+## Game Overview
+Follow Lily Ly-Kadoya, an 18-year-old college freshman who has been living a normal life despite coming from another world. Despite the loss of her biological parents, she tried to keep a sense of normalcy until she is pulled into the Mirror World and the threat of Demons, monsters that are a person's inner shame and regret. When her adoptive mother and AEGIS Agent, Angel attempting to fight the Demon. Lily would make a pact with a Demon herself, Ink Spot, where she is given the strength to fight back and seek vengence.
