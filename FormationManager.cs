@@ -7,7 +7,7 @@ namespace MaskedriderEngine.Systems
 {
     public class FormationManager
     {
-        private readonly CombatState[] _slots;
+        private readonly CombatantState[] _slots;
 
         // Constructor allows 4 slots for players, and up to 6 for dynamic enemies
         public FormationManager(int capacity = 4)
@@ -15,14 +15,14 @@ namespace MaskedriderEngine.Systems
             if (capacity < 1 || capacity > 6) 
                 throw new ArgumentOutOfRangeException(nameof(capacity), "Formation capacity must be between 1 and 6.");
 
-            _slots = new CombatState[capacity];
+            _slots = new CombatantState[capacity];
         }
 
         public int Capacity => _slots.Length;
 
-        public bool AssignPosition(CombatState combatant, LineDepth depth)
+        public bool AssignPosition(CombatantState combatant, LineDepth depth)
         {
-            int index = (int)depths;
+            int index = (int)depth;
             if (index >= _slots.Length) return false; //Out of bounds for this formation size
             if (_slots[index] != null) return false;
 
@@ -46,7 +46,7 @@ namespace MaskedriderEngine.Systems
         public IEnumerable<CombatantState> GetFirstNTargets(int count)
         {
             return _slots 
-                .Where(slot => slot != null && slot.IsDefeated)
+                .Where(slot => slot != null && !slot.IsDefeated)
                 .Take(count);
         }
 

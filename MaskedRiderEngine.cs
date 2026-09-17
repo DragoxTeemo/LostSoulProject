@@ -104,7 +104,7 @@ namespace MaskedRiderEngine
     public class SafehouseManager
     {
         private static double _maniaDegradationPenalty = 0.0; 
-        public static void ApplyHealer(CombatantState rider, bool isLilyManic, int consecutiveManic = 0)
+        public static void ApplyHealer(CombatantState rider, bool isLilyManic, int consecutiveManicVisits = 0)
         {
             double pvRestorePercent = 0.60; //PV stands for Perseverance
             double arRestorePercent = 0.40; // AR stands for Armor Integrity
@@ -231,9 +231,29 @@ namespace MaskedRiderEngine
             if (!IsEncounteringInkSpot) return -1;
 
             InkSpotCurrentRound++;
-            CharacterWeapon punchAttack = CharacterLoadouts.NirvanaAttacks.Find();
+            CharacterWeapon punchAttack = CharacterLoadout.NirvanaAttacks.Find(w => w.Name == "Punch");
+            int damageToInkSpot = punchAttack != null ? punchAttack.BasePower: 0; //Ensures Lily does no damage to Ink Spot
+
+            if (InkSpotCurrentRound >= MaxInkSpotRound)
+            {
+                ResolveInkSpotEncounter();
+            }
+            return damageToInkSpot;
         }
 
+        private void ResolveInkSpotEncounter()
+        {
+            IsEncounteringInkSpot = false;
+            InkSpotCurrentRound = 0;
+            RealWorldStress = 75.0; // Drops out of max cap
+            HasExperiencedInkSpotPenalty = true;
+        }
+
+        public void ClearInkSpotPenalty()
+        {
+            HasExperiencedInkSpotPenalty = false;
+        }
+ 
         // Used in Mirror World
         public int TreatWithCD(string albumKey)
         {
@@ -258,9 +278,9 @@ namespace MaskedRiderEngine
             }
             return 0.0;
         }
-        public int GetSocialLinkModifier(CombatantState lilyStress)
+        public int GetSocialLinkModifier(CombatantState lilyCombatState)
         {
-            if (lilyStress.CurrentSanityTier == SanityTier.Manic || RealWorldStress >= 80.0)
+            if (IsEncounteringInkSpot || HasExperiencedInkSpotPenalty)
             {
                 return -1;
             }
@@ -272,7 +292,7 @@ namespace MaskedRiderEngine
         public string NodeId {get;set;}
         public string Speaker {get; set;}
         public string DialogueText {get;set;}
-        public List<DialogueChoice> Choices {get; set;} = new List<DialogueNode>();
+        public List<DialogueChoice> Choices {get; set;} = new List<DialogueChoice>();
     }
 
     public class DialogueChoice
@@ -291,7 +311,7 @@ namespace MaskedRiderEngine
         /// <param name="lilyCombatState">Lily's combat entity state to check her SanityTier.</param>
         /// <param name="chosen">The dialogue choice selected by the player.</param>
         /// <returns>The net Social Link points successfully awarded.</returns>
-        public int EvaluateDialogueChoices(GameSession session, CombatantState lilyCombatState, DialogueChoice chosen)
+        public int GetSocialLinkModifier(GameSession session, CombatantState lilyCombatState, DialogueChoice chosen)
         {
             int penalty = session.MentalHealthManager.GetSocialLinkModifier(lilyCombatState);
             int finalPoint = chosen.BaseSocialLinkPointsAwarded + penalty;

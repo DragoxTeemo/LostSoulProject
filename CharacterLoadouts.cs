@@ -92,7 +92,7 @@ namespace MaskedRiderEngine.Models
             {
                 Name = "Reckless Attack",
                 BasePower = 5,
-                Scope = AttackScope.DualAction, // Eva can attack twice per round
+                Scope = AttackScope.Extra, // Eva can attack twice per round
                 Element = ElementType.Physical,
                 StatusEffectChance = 0.25, //Chance to stun
                 StatusEffectType = "Stun"
