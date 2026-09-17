@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Security.Cryptography;
 
 namespace MaskedRiderEngine
@@ -144,7 +145,7 @@ namespace MaskedRiderEngine
 
     public class Music
     {
-        public static readonly HashSet<string> Albums = new HashSet<string>
+        public static readonly HashSet<string> MasterCatalog = new HashSet<string>
         {
             "Prince - Purple Rain",
             "Marvin Gaye - What's Going On",
@@ -157,13 +158,145 @@ namespace MaskedRiderEngine
         };
 
         private static readonly Random random = new Random();
-        public static int PlaySong(string albumKey)
+        public static int RollSongEffect(string albumKey)
         {
-            if (Albums.Contains(albumKey))
+            if (MasterCatalog.Contains(albumKey))
             {
                 return random.Next(20,31);
             }
             return 10; // a backup for if the return random.Next() fails
         }
+    }
+    public class GameSession
+    {
+        public MentalHealthManager MentalHealthManager {get; set;} = new MentalHealthManager();
+    }
+    public class MentalHealthManager
+    {
+        public  double RealWorldStress {get; set;} = 0.0;
+        public readonly HashSet<string> OwnedCDs = new HashSet<string>();
+        public readonly HashSet<string> OwnedVinylRecords = new HashSet<string>();
+
+        private static readonly Random _rng = new Random();
+        
+        //Ink Spot Encounter State Tracking
+        public bool IsEncounteringInkSpot {get; set;} = false;
+        public int InkSpotCurrentRound {get; set;} = 0;
+        public const int MaxInkSpotRound = 3;
+
+        //Panic attack triggers real 
+        public bool IsExperiencingPanicAttack { get; private set; } = false;
+        public bool HasExperiencedInkSpotPenalty {get; set;} = false;
+        public void AccumulateStress(double baseAmount)
+        {
+            RealWorldStress += baseAmount;
+            RealWorldStress = Math.Min(100.0, Math.Max(0.0, RealWorldStress));
+
+            // Guaranteed Ink Spot encounter when stress hits 100%
+            if (RealWorldStress >= 100.0 && !IsEncounteringInkSpot)
+            {
+                TriggerInkSpotEncounter();
+                return;
+            }
+
+            // Random Panic attacks Check (20% chance when in Stressed/Manic from 20-100)
+            if (RealWorldStress >= 20.0 && !IsEncounteringInkSpot)
+            {
+                RollForPanicAttack();
+            }
+        }
+        private void TriggerInkSpotEncounter()
+        {
+            IsEncounteringInkSpot = true;
+            IsExperiencingPanicAttack = false;
+            InkSpotCurrentRound = 0;
+        }
+
+        private void RollForPanicAttack()
+        {
+            double roll = _rng.NextDouble();
+            if (roll < 0.20)
+            {
+                IsExperiencingPanicAttack = true;
+            }
+        }
+
+        public void ClearPanicAttack()
+        {
+            IsExperiencingPanicAttack = false;
+        }
+
+        public int ProcessInkSpotTurn(string playerAction)
+        {
+            if (!IsEncounteringInkSpot) return -1;
+
+            InkSpotCurrentRound++;
+            CharacterWeapon punchAttack = CharacterLoadouts.NirvanaAttacks.Find();
+        }
+
+        // Used in Mirror World
+        public int TreatWithCD(string albumKey)
+        {
+            if (Music.MasterCatalog.Contains(albumKey) && OwnedCDs.Contains(albumKey))
+            {
+                int sanityHealValue = Music.RollSongEffect(albumKey);
+                RealWorldStress = Math.Max(0.0, RealWorldStress - (sanityHealValue * 1.5));
+                return sanityHealValue;
+            }
+            return 0;
+        }
+        // Persona-Style nighttime action, sacrifices the night to recover stress by listning to vinyl records. 
+        public double ListenToVinylNight(string albumKey)
+        {
+            if (Music.MasterCatalog.Contains(albumKey) && OwnedVinylRecords.Contains(albumKey))
+            {
+                int baseRelief = Music.RollSongEffect(albumKey);
+                double stressReduction = baseRelief * 1.5; // Vinyl gives a bonus
+
+                RealWorldStress = Math.Max(0.0, RealWorldStress - stressReduction);
+                return stressReduction;
+            }
+            return 0.0;
+        }
+        public int GetSocialLinkModifier(CombatantState lilyStress)
+        {
+            if (lilyStress.CurrentSanityTier == SanityTier.Manic || RealWorldStress >= 80.0)
+            {
+                return -1;
+            }
+            return 0;
+        }
     }    
+    public class DialogueNode
+    {
+        public string NodeId {get;set;}
+        public string Speaker {get; set;}
+        public string DialogueText {get;set;}
+        public List<DialogueChoice> Choices {get; set;} = new List<DialogueNode>();
+    }
+
+    public class DialogueChoice
+    {
+        public string ChoiceText {get; set;}
+        public string NextNodeId {get; set;}
+        public int BaseSocialLinkPointsAwarded {get; set;} = 3; 
+    }
+    public class DialogueManager
+    {
+        /// <summary>
+        /// Processes a player's dialogue choice, automatically factoring in Lily's 
+        /// psychological state (combat sanity / unmanaged real-world stress >= 81).
+        /// </summary>
+        /// <param name="session">The active game session containing Lily's mental state.</param>
+        /// <param name="lilyCombatState">Lily's combat entity state to check her SanityTier.</param>
+        /// <param name="chosen">The dialogue choice selected by the player.</param>
+        /// <returns>The net Social Link points successfully awarded.</returns>
+        public int EvaluateDialogueChoices(GameSession session, CombatantState lilyCombatState, DialogueChoice chosen)
+        {
+            int penalty = session.MentalHealthManager.GetSocialLinkModifier(lilyCombatState);
+            int finalPoint = chosen.BaseSocialLinkPointsAwarded + penalty;
+
+            return Math.Max(0, finalPoint);
+        }
+    }
 }

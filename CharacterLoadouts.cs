@@ -48,7 +48,15 @@ namespace MaskedRiderEngine.Models
                 BasePower = 12,
                 Scope = AttackScope.SingleTarget,
                 Element = ElementType.Physical
-            }  
+            },
+            // When Lily is out of armor and fights Ink Spot only.
+            new CharacterWeapon
+            {
+                Name = "Punch",
+                BasePower = 0,
+                Scope = AttackScope.SingleTarget,
+                Element = ElementType.Physical
+            }
         };
         // Alvin/Vector
         public static readonly List<CharacterWeapon> VectorAttacks = new List<CharacterWeapon>
