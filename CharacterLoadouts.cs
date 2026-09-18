@@ -28,6 +28,10 @@ namespace MaskedRiderEngine.Models
         public double StatusEffectChance {get; set;} = 0.0;
         public string StatusEffectType {get; set;} = null; // stun, shock, drowsy, burn, blind, more
         public bool HasVarianceModifier {get; set;} = false; // Alvin's 60/40 variance rule
+        public int MaxAmmo {get; set;} = 0; // Clip capacity
+        public int CurrentAmmo {get; set;} = 0; // Counter for current ammo in use
+        public int ReserveAmmo {get; set;} = 0; // Stored backups 
+        public int AshCostToCraft {get; set;} = 0;
     }
 
     public static class CharacterLoadout
@@ -81,7 +85,7 @@ namespace MaskedRiderEngine.Models
                 Name = "Null", // need to find name
                 BasePower = 5,
                 Scope = AttackScope.MultiTarget,
-                Element = ElementType.Physical,
+                Element = ElementType.Physical
             }
         };
 
@@ -113,12 +117,23 @@ namespace MaskedRiderEngine.Models
         {
             new CharacterWeapon
             {
+                Name = "Punch",
+                BasePower = 3,
+                Scope = AttackScope.SingleTarget,
+                Element = ElementType.Physical
+            },
+            new CharacterWeapon
+            {
                 Name = "Tesla Discharge",
                 BasePower = 8,
                 Scope = AttackScope.SingleTarget,
                 Element = ElementType.Electric,
                 StatusEffectChance = 0.30,
-                StatusEffectType = "Shock"
+                StatusEffectType = "Shock",
+                MaxAmmo = 6,
+                CurrentAmmo = 6,
+                ReserveAmmo = 12,
+                AshCostToCraft = 10
             },
             new CharacterWeapon
             {
@@ -127,7 +142,11 @@ namespace MaskedRiderEngine.Models
                 Scope = AttackScope.SingleTarget,
                 Element = ElementType.Fire,
                 StatusEffectChance = 0.40,
-                StatusEffectType = "Burn"
+                StatusEffectType = "Burn",
+                MaxAmmo = 6,
+                CurrentAmmo = 6,
+                ReserveAmmo = 12,
+                AshCostToCraft = 10
             },
             new CharacterWeapon
             {
@@ -136,7 +155,11 @@ namespace MaskedRiderEngine.Models
                 Scope = AttackScope.SingleTarget,
                 Element = ElementType.Physical,
                 StatusEffectChance = 0.50, // 50% high chance to blind causing a chance to miss
-                StatusEffectType = "Blind"
+                StatusEffectType = "Blind",
+                MaxAmmo = 6,
+                CurrentAmmo = 6,
+                ReserveAmmo = 12,
+                AshCostToCraft = 8
             },
             new CharacterWeapon
             {
@@ -145,7 +168,63 @@ namespace MaskedRiderEngine.Models
                 Scope = AttackScope.MultiTarget,
                 Element = ElementType.Physical,
                 StatusEffectChance = 0.80,
-                StatusEffectType = "Sleep"
+                StatusEffectType = "Sleep",
+                MaxAmmo = 8,
+                CurrentAmmo = 8,
+                ReserveAmmo = 16,
+                AshCostToCraft = 6
+            }
+        };
+        public static readonly List<CharacterWeapon> BasicDemonAttacks = new List<CharacterWeapon>
+        {
+            new CharacterWeapon
+            {
+                Name = "Claw",
+                BasePower = 8,
+                Scope = AttackScope.SingleTarget,
+                Element = ElementType.Physical,
+            },
+            new CharacterWeapon
+            {
+                Name = "Swipe",
+                BasePower = 6,
+                Scope = AttackScope.SingleTarget,
+                Element = ElementType.Physical
+            }
+        };
+        public static readonly List<CharacterWeapon> HorrorDemonAttack = new List<CharacterWeapon>
+        {
+            new CharacterWeapon
+            {
+                Name = "Bite",
+                BasePower = 12,
+                Scope = AttackScope.SingleTarget,
+                Element = ElementType.Physical,
+            },
+            new CharacterWeapon
+            {
+                Name = "Screech",
+                BasePower = 8,
+                Scope = AttackScope.MultiTarget,
+                Element = ElementType.Physical
+            }
+        };
+
+        public static readonly List<CharacterWeapon> ToxicDemonAttack = new List<CharacterWeapon>
+        {
+            new CharacterWeapon
+            {
+                Name = "Toxic",
+                BasePower = 10,
+                Scope = AttackScope.SingleTarget,
+                Element = ElementType.Physical
+            },
+            new CharacterWeapon
+            {
+                Name = "Miasma Cloud",
+                BasePower = 6,
+                Scope = AttackScope.SingleTarget,
+                Element = ElementType.Physical
             }
         };
     }

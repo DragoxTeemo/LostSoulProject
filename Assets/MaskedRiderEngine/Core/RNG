@@ -1,0 +1,14 @@
+using System;
+using System.Runtime.CompilerServices;
+
+namespace MaskedRiderEngine.Core
+{
+    public static class RNG
+    {
+        private static Random _random = new Random(); 
+        public static void Seed(int seed) => _random = new Random(seed);
+        public static double NextDouble() => _random.NextDouble();
+        public static int Next(int minInclusive, int maxExclusive) => _random.Next(minInclusive, maxExclusive);
+        public static bool Chance(double probability) => probability > 0.0 && _random.NextDouble() < probability;
+    }
+}

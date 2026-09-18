@@ -42,6 +42,12 @@ namespace MaskedRiderEngine
         public Dictionary<string, double> StatWeight {get; set;}
     }
 
+    public class CharacterWeapon
+    {
+        public string Name {get; set;}
+        public int BasePower {get; set;}
+    }
+
     public class RegistryData
     {
         public string Id { get; set; }
@@ -52,6 +58,7 @@ namespace MaskedRiderEngine
         public int BaseResourceMax {get; set;} // Baseline HP for Lily, Baseline PV for Alvin, Elliot, Eva
         public bool UsesHealthPoints {get; set;} // True for Lily only, False = PV
         public int RegenAmount {get; set;} //deciding between percent
+        public bool HasPassiveRegen {get; set;} 
         public bool RequiresArmorRepair {get; set;} // True for everyone but Lily
 
         //Engineer Stats for Elliot/Circuit 
@@ -83,7 +90,7 @@ namespace MaskedRiderEngine
 
     public class CombatantState
     {
-        public MaskedriderEntity Profile {get; set;} 
+        public MaskedRiderEntity Profile {get; set;} 
         public double Sanity {get; set;} = 0; // Sanity tracking (+2 after every full turn in combat)
         public bool IsDefeated {get; set;} = false;
         public int TurnsInBattle {get; set;} = 0;
@@ -109,7 +116,7 @@ namespace MaskedRiderEngine
             double pvRestorePercent = 0.60; //PV stands for Perseverance
             double arRestorePercent = 0.40; // AR stands for Armor Integrity
 
-            bool isLilyStressedOrManic = (rider.Profile.Codename == "Nirvana" && 
+            bool isLilyStressedOrManic = (rider.Profile.Blueprint.Codename == "Nirvana" && 
                 (rider.CurrentSanityTier == SanityTier.Stressed || rider.CurrentSanityTier == SanityTier.Manic));
 
             if (isLilyStressedOrManic)
