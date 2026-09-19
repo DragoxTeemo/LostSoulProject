@@ -10,32 +10,37 @@ namespace MaskedRiderEngine.Models
         public int Level {get; set;} = 1;
         public int Xp {get; set;} = 0;
 
+        //Accumulated flat resource gain from level-ups, kept 
+        public int BonusResourceFromLevels {get; set;} = 0;
+
+
         public int CurrentResources {get; set;} // HP for Lily, PV for everyone else
-        public int ArmorIntegrityState { get; set; } = GameConfig.MaxArmorIntegrity;
-        public List<WeaponInstance> Weapons { get; } = new List<WeaponInstance>();
+        public int ArmorIntegrityState {get; set;} = GameConfig.MaxArmorIntegrity;
+        public List<WeaponInstance> Weapons {get; } = new List<WeaponInstance>();
         public MaskedRiderEntity(RegistryData blueprint, string InstanceId)
         {
             Blueprint = blueprint;
             InstanceId = instanceId;
             CurrentResources = blueprint.BaseResourceMax;
-            ArmorIntegrityState = blueprint.RequiresArmorRepair? GameConfig.MaxArmorIntegrity: 0;
+            ArmorIntegrityState = blueprint.RequiresArmorRepair ? GameConfig.MaxArmorIntegrity: 0;
  
             foreach (var weaponId in blueprint.WeaponIds)
                 Weapons.Add(new WeaponInstance(WeaponCatalog.Get(weaponId)));
 
         }
+        // Convenience proxies
         public string Codename => Blueprint.Codename;
         public string Name => Blueprint.Name;
+
+        //Base plus whatever leveling has added
         public int MaxResource => Blueprint.BaseResourceMax;
+        public int Speed => Blueprint.Speed; // Hardcoded, never grows
         public bool UsesHealthPoints => Blueprint.UsesHealthPoints;
         public bool HasPassiveRegen => Blueprint.HasPassiveRegen;
         public int RegenAmount => Blueprint.RegenAmount;
         public bool RequiresArmorRepair => Blueprint.RequiresArmorRepair;
         public ArmorWeightClass ArmorClass => Blueprint.ArmorClass;
         public Faction Faction => Blueprint.Faction;
- 
-        public WeaponInstance GetWeapon(string weaponId)
-            => Weapons.Find(w => w.Definition.Id == weaponId);
-
+        public WeaponInstance GetWeapon(string weaponId) => Weapons.Find(w => w.Definition.Id == weaponId);
     }
 }

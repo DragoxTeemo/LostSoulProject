@@ -6,7 +6,7 @@ namespace MaskedRiderEngine.Models
     public class RiderForm
     {
         public string FormName {get; set;} 
-        public string element {get; set;}
+        public string Elements {get; set;}
         public Dictionary<string, double> StatWeight {get; set;} = new Dictionary<string, double>();
     }
     public class RegistryData
@@ -16,10 +16,17 @@ namespace MaskedRiderEngine.Models
         public string Codename {get; set;}
         public Faction Faction {get; set;} = Faction.Enemy;
 
+        // Hardcoded speed for all characters, Eva should be fastest with Alvin, then Lily, then Elliot. 
+        // The broad concepts are Basic Demon is fast, then Toxic, then Horror, not established numbers yet
+        public LevelingCoefficients Coefficients { get; set; } = new LevelingCoefficients(); // XP curve for main characters
+        public int Speed {get; set;} = 10;
+
+        // Armor, HP, and PV
         public int BaseResourceMax {get; set;}
         public bool UsesHealthPoints {get; set;} //True for only Lily
         public bool HasPassiveRegen {get; set;}
         public int RegenAmount {get; set;}
+        public bool RequiresArmorRepair {get; set;}
         public ArmorWeightClass ArmorClass {get; set;}
 
         //Combat rules

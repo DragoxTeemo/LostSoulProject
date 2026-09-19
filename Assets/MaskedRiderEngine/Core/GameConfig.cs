@@ -4,6 +4,12 @@ namespace MaskedRiderEngine.Core
     public static class GameConfig 
     {
         //Sanity
+        public const int MaxLevel = 20;
+        public const int BaseResourceGainPerLevel = 3;
+        public const double MinCurvePower = 0.8;
+        public const double MaxCurvePower = 1.5;
+        
+        // Lily's Sanity
         public const int MaxSanity = 100;
         public const int MinSanity = 0;
         public const int SanityThresholdStressed = 21;
