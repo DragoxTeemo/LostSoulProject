@@ -16,8 +16,7 @@ namespace MaskedRiderEngine.Models
         //Set by FormationManager when the combatant is slotted.
         public int SlotIndex { get; internal set; } = -1;
 
-        private readonly Dictionary<StatusEffectType, StatusEffect> _statuses
-            = new Dictionary<StatusEffectType, StatusEffect>();
+        private readonly Dictionary<StatusEffectType, StatusEffect> _statuses = new Dictionary<StatusEffectType, StatusEffect>();
 
         public CombatantState(MaskedRiderEntity profile)
         {
@@ -28,7 +27,7 @@ namespace MaskedRiderEngine.Models
         public string Codename => Profile.Codename;
         public Faction Faction => Profile.Faction;
         public bool IsAlive => !IsDefeated && Profile.CurrentResources > 0;
-
+        public int Speed => Profile.Speed;
         public SanityTier CurrentSanityTier
         {
             get
@@ -46,9 +45,7 @@ namespace MaskedRiderEngine.Models
         }
 
         public IEnumerable<StatusEffect> ActiveStatuses => _statuses.Values;
-
         public bool HasStatus(StatusEffectType type) => _statuses.ContainsKey(type);
-
         public void ApplyStatus(StatusEffectType type, int durationTurns)
         {
             if (type == StatusEffectType.None || durationTurns <= 0) return;
@@ -69,7 +66,6 @@ namespace MaskedRiderEngine.Models
             }
             foreach (var type in expired) _statuses.Remove(type);
         }
-
         public bool IsIncapacitated
         {
             get
